@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.UnsupportedEncodingException;
+
 @Controller
 public class ApiTestController {
 
@@ -21,8 +23,8 @@ public class ApiTestController {
     }
 
     @GetMapping("/api")
-    public String getApiData(Model model) {
-        String data = externalApiService.getWeatherByCity("Bali");
+    public String getApiData(Model model) throws UnsupportedEncodingException {
+        String data = externalApiService.getWeatherByCity("New York");
         model.addAttribute("data", data);
 
         return "main/api-data";
