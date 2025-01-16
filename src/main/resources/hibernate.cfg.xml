@@ -18,6 +18,6 @@
         <property name="format_sql">true</property>
 
         <!-- Actions with DB when app starts -->
-        <property name="hbm2ddl.auto">validate</property>
+<!--        <property name="hbm2ddl.auto">none</property>-->
     </session-factory>
 </hibernate-configuration>
