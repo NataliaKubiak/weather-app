@@ -10,20 +10,46 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    springVersion = '6.2.0'
+    lombokVersion = '1.18.36'
+    junitVersion = '5.11.0'
+}
+
 dependencies {
-    implementation 'org.springframework:spring-core:6.2.0'
-    implementation 'org.springframework:spring-context:6.2.0'
-    implementation 'org.springframework:spring-web:6.2.0'
-    implementation 'org.springframework:spring-webmvc:6.2.0'
+    implementation "org.springframework:spring-core:${springVersion}"
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-web:${springVersion}"
+    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation "org.springframework:spring-orm:${springVersion}"
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
 //  thymeleaf
     implementation 'org.thymeleaf:thymeleaf-spring6:3.1.3.RELEASE'
 
+    //DataBase
+    implementation 'org.hibernate:hibernate-core:6.6.3.Final'
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'com.zaxxer:HikariCP:6.2.1'
+    implementation 'org.liquibase:liquibase-core:4.30.0'
 
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    //logger
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
+
+    //lombok
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly ("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor ("org.projectlombok:lombok:${lombokVersion}")
+
+    //tests
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation 'org.mockito:mockito-core:5.14.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.14.2'
 }
 
 war {
