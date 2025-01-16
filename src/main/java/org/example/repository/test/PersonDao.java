@@ -1,6 +1,6 @@
-package org.example.repository;
+package org.example.repository.test;
 
-import org.example.entities.Person;
+import org.example.entities.test.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

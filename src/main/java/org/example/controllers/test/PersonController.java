@@ -1,7 +1,7 @@
-package org.example.controllers;
+package org.example.controllers.test;
 
-import org.example.entities.Person;
-import org.example.service.PersonService;
+import org.example.entities.test.Person;
+import org.example.service.test.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

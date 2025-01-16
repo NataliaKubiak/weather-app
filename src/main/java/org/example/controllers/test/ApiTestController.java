@@ -1,14 +1,10 @@
-package org.example.controllers;
+package org.example.controllers.test;
 
-import org.example.entities.Person;
-import org.example.service.ExternalApiService;
+import org.example.service.test.ExternalApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.UnsupportedEncodingException;
 
