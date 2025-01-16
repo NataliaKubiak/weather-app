@@ -1,10 +1,15 @@
 package org.example.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -13,9 +18,13 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
+import javax.sql.DataSource;
+import java.util.Properties;
+
 @Configuration
 @ComponentScan("org.example")
 @EnableWebMvc
+@EnableTransactionManagement
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
@@ -56,5 +65,47 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("/static/");
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.postgresql.Driver");
+        config.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
+        config.setUsername("postgres");
+        config.setPassword("postgres123");
+
+        // Дополнительные настройки для HikariCP
+//        config.setMaximumPoolSize(10); // Максимальное количество соединений в пуле
+//        config.setMinimumIdle(2); // Минимальное количество соединений в пуле
+//        config.setIdleTimeout(30000); // Время в миллисекундах перед завершением неактивного соединения
+//        config.setMaxLifetime(1800000); // Максимальное время жизни соединения
+//        config.setConnectionTimeout(20000); // Максимальное время ожидания подключения
+
+        return new HikariDataSource(config);
+    }
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
+        factoryBean.setDataSource(dataSource());
+        factoryBean.setPackagesToScan("org.example");
+        factoryBean.setHibernateProperties(hibernateProperties());
+        return factoryBean;
+    }
+
+    private Properties hibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.show_sql", "true");
+        properties.put("hibernate.format_sql", "true");
+        properties.put("hibernate.hbm2ddl.auto", "validate");
+        return properties;
+    }
+
+    @Bean
+    public HibernateTransactionManager transactionManager() {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(sessionFactory().getObject());
+        return transactionManager;
     }
 }
