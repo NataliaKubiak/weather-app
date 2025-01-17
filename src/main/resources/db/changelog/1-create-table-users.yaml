@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: Natalia Kubiak
+      author: Natalia
       changes:
         - createTable:
-            tableName: people
+            tableName: users
             columns:
               - column:
                   name: id
@@ -13,13 +13,13 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: name
-                  type: varchar(128)
+                  name: login
+                  type: varchar(50)
                   constraints:
                     nullable: false
               - column:
-                  name: age
-                  type: int
+                  name: password
+                  type: varchar(50)
                   constraints:
                     nullable: false
 

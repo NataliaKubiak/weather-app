@@ -1,3 +1,7 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changeset-1.yaml
+      file: db/changelog/1-create-table-users.yaml
+  - include:
+      file: db/changelog/2-create-table-sessions.yaml
+  - include:
+      file: db/changelog/3-create-table-locations.yaml
