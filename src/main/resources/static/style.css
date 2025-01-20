@@ -1,9 +1,5 @@
-/*body {*/
-/*    min-height: 100vh;*/
-/*}*/
-
 body {
-    background-color: red;
+    min-height: 100vh;
 }
 
 section#page-content {
@@ -21,7 +17,7 @@ section#page-content {
 }
 
 .weather-logo {
-    background-image: url("../images/weather-app.png");
+    background-image: url("/static/images/weather-app.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
