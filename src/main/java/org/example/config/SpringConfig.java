@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -69,23 +68,23 @@ public class SpringConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
-                .addResourceLocations("/static/");
+                .addResourceLocations("classpath:/static/");  // Указываем путь через classpath
     }
 
     @Bean
-    public DataSource dataSource() {
+    public HikariDataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         config.setUsername("postgres");
         config.setPassword("postgres123");
 
-        // Дополнительные настройки для HikariCP
-//        config.setMaximumPoolSize(10); // Максимальное количество соединений в пуле
-//        config.setMinimumIdle(2); // Минимальное количество соединений в пуле
-//        config.setIdleTimeout(30000); // Время в миллисекундах перед завершением неактивного соединения
-//        config.setMaxLifetime(1800000); // Максимальное время жизни соединения
-//        config.setConnectionTimeout(20000); // Максимальное время ожидания подключения
+        // Оптимизация для стабильной работы
+        config.setMaximumPoolSize(10); // Максимальное количество соединений в пуле
+        config.setMinimumIdle(2); // Минимальное количество неиспользуемых соединений
+        config.setIdleTimeout(300000); // Таймаут простоя соединения (в миллисекундах)
+        config.setConnectionTimeout(30000); // Максимальное время ожидания соединения
+        config.setLeakDetectionThreshold(2000); // Включение обнаружения утечек (2 секунды)
 
         return new HikariDataSource(config);
     }
