@@ -24,13 +24,13 @@ public class PersonController {
     @GetMapping()
     public String index(Model model) {
         model.addAttribute("people", personService.showAllPeople());
-        return "main/index2";
+        return "test/index2";
     }
 
     @GetMapping("/new")
     public String addPerson(Model model) {
         model.addAttribute("person", new Person());
-        return "main/newPerson";
+        return "test/newPerson";
     }
 
     @PostMapping()
