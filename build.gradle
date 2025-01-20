@@ -34,7 +34,21 @@ dependencies {
     implementation 'org.hibernate:hibernate-core:6.6.3.Final'
     implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'com.zaxxer:HikariCP:6.2.1'
-    implementation 'org.liquibase:liquibase-core:4.30.0'
+
+//    все попробованные версии давали:
+//    17-Jan-2025 16:29:20.930
+//    SEVERE [main] org.apache.catalina.loader.WebappClassLoaderBase.checkThreadLocalMapForLeaks
+//    The web application [ROOT] created a ThreadLocal with key of type [java.lang.InheritableThreadLocal] (value [java.lang.InheritableThreadLocal@7ef27d7f]) and a value of type [liquibase.SingletonScopeManager] (value [liquibase.SingletonScopeManager@490caf5f]) but failed to remove it when the web application was stopped. Threads are going to be renewed over time to try and avoid a probable memory leak.
+//    implementation 'org.liquibase:liquibase-core:4.30.0'
+//    implementation 'org.liquibase:liquibase-core:4.29.2'
+//    implementation 'org.liquibase:liquibase-core:4.31.0'
+//    implementation 'org.liquibase:liquibase-core:4.9.1'
+//    implementation 'org.liquibase:liquibase-core:4.27.0'
+
+    //no errors
+//    implementation 'org.liquibase:liquibase-core:4.22.0'
+//    implementation 'org.liquibase:liquibase-core:4.24.0'
+    implementation 'org.liquibase:liquibase-core:4.26.0'
 
     //logger
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
