@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.entities.User;
+import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
 import org.example.entities.mappers.NewUserDtoToUserMapper;
@@ -45,5 +46,23 @@ public class UserService {
 
         userDao.createUser(user);
         return userDtoToUserMapper.toDto(user);
+    }
+
+    @Transactional
+    public boolean verifyUsername(String username) {
+        Optional<User> optionalUser = userDao.getUserByLogin(username);
+        return optionalUser.isPresent();
+    }
+
+    @Transactional
+    public boolean verifyPassword(LoginUserDto loginUserDto) {
+        Optional<User> userByLogin = userDao.getUserByLogin(loginUserDto.getLogin());
+
+        if(userByLogin.isEmpty()) {
+            return false;
+        }
+
+        String encryptedPassword = userByLogin.get().getEncryptedPassword();
+        return passwordEncoder.matches(loginUserDto.getPassword(), encryptedPassword);
     }
 }
