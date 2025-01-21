@@ -1,9 +1,12 @@
 package org.example.controllers;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.example.entities.User;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
+import org.example.service.SessionService;
 import org.example.service.UserService;
 import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,12 @@ import java.util.Optional;
 public class SignUpController {
 
     private final UserService userService;
+    private final SessionService sessionService;
 
     @Autowired
-    public SignUpController(UserService userService) {
+    public SignUpController(UserService userService, SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping()
@@ -37,13 +42,14 @@ public class SignUpController {
 
     @PostMapping()
     public String signUp(@ModelAttribute("newUserDto") @Valid NewUserDto newUserDto,
-                         BindingResult bindingResult) {
+                         BindingResult bindingResult,
+                         HttpServletResponse response) {
 
         if (!Validator.isSamePassword(newUserDto.getPassword(), newUserDto.getRepeatPassword())) {
             bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
         }
 
-        Optional<UserDto> maybeUser = userService.findUserByLogin(newUserDto);
+        Optional<UserDto> maybeUser = userService.findUserByLogin(newUserDto.getLogin());
         if (maybeUser.isPresent()) {
             bindingResult.rejectValue("login", "user.already.exists", "Account with this username already exists.");
         }
@@ -53,7 +59,17 @@ public class SignUpController {
         }
 
         UserDto registeredUser = userService.registerUser(newUserDto);
+        createSessionAndCookie(response, registeredUser.getId());
 
         return "redirect:/index";  // успешная регистрация
+    }
+
+    private void createSessionAndCookie(HttpServletResponse response, int userId) {
+        String sessionId = sessionService.createSession(userId);
+
+        Cookie cookie = new Cookie("SESSION_ID", sessionId);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

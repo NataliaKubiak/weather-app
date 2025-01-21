@@ -3,6 +3,7 @@ package org.example.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
+import org.example.controllers.interceptors.SessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -13,10 +14,7 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -30,6 +28,8 @@ import java.util.Properties;
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
 public class SpringConfig implements WebMvcConfigurer {
+
+    // TODO: 21/01/2025 разбить Config на несколько штук
 
     private final ApplicationContext applicationContext;
 
@@ -103,6 +103,7 @@ public class SpringConfig implements WebMvcConfigurer {
         properties.put("hibernate.show_sql", "true");
         properties.put("hibernate.format_sql", "true");
         properties.put("hibernate.hbm2ddl.auto", "none");
+        // TODO: 21/01/2025 почему-то не работает и не видит "expires_at" колонку в Sessions :(
         properties.put("hibernate.physical_naming_strategy",
                 "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl");
         return properties;
@@ -127,5 +128,13 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        SessionInterceptor sessionInterceptor = applicationContext.getBean(SessionInterceptor.class);
+        registry.addInterceptor(sessionInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/static/**", "/sign-in", "/sign-up");
     }
 }

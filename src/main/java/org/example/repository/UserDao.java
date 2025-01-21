@@ -21,6 +21,10 @@ public class UserDao {
         this.sessionFactory = sessionFactory;
     }
 
+    public Optional<User> getUserById(int id) {
+        return Optional.ofNullable(sessionFactory.getCurrentSession().get(User.class, id));
+    }
+
     public Optional<User> getUserByLogin(String login) {
         log.debug("Searching for User with login: {}", login);
         Session session = sessionFactory.getCurrentSession();

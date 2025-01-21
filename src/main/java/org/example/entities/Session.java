@@ -18,11 +18,12 @@ import java.util.Date;
 public class Session {
 
     @Id
-    private int id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    private ZonedDateTime ExpiresAt;
+    @Column(name = "expires_at")
+    private ZonedDateTime expiresAt;
 }

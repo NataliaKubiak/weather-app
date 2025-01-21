@@ -30,10 +30,9 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserDto> findUserByLogin(NewUserDto newUserDto) {
-        User userEntity = newUserDtoToUserMapper.toEntity(newUserDto);
+    public Optional<UserDto> findUserByLogin(String login) {
 
-        Optional<User> userByLogin = userDao.getUserByLogin(userEntity.getLogin());
+        Optional<User> userByLogin = userDao.getUserByLogin(login);
 
         return userByLogin.map(user -> userDtoToUserMapper.toDto(user));
     }
@@ -48,11 +47,11 @@ public class UserService {
         return userDtoToUserMapper.toDto(user);
     }
 
-    @Transactional
-    public boolean verifyUsername(String username) {
-        Optional<User> optionalUser = userDao.getUserByLogin(username);
-        return optionalUser.isPresent();
-    }
+//    @Transactional
+//    public boolean verifyUsername(String username) {
+//        Optional<User> optionalUser = userDao.getUserByLogin(username);
+//        return optionalUser.isPresent();
+//    }
 
     @Transactional
     public boolean verifyPassword(LoginUserDto loginUserDto) {
