@@ -20,5 +20,6 @@ public class User {
 
     private String login;
 
-    private String password;
+    @Column(name = "password")
+    private String encryptedPassword;
 }

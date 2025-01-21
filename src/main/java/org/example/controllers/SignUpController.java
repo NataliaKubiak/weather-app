@@ -3,7 +3,7 @@ package org.example.controllers;
 import jakarta.validation.Valid;
 import org.example.entities.User;
 import org.example.entities.dto.NewUserDto;
-import org.example.entities.test.Person;
+import org.example.entities.dto.UserDto;
 import org.example.service.UserService;
 import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class SignUpController {
             bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
         }
 
-        Optional<User> maybeUser = userService.getUser(newUserDto);
+        Optional<UserDto> maybeUser = userService.findUserByLogin(newUserDto);
         if (maybeUser.isPresent()) {
             bindingResult.rejectValue("login", "user.already.exists", "Account with this username already exists.");
         }

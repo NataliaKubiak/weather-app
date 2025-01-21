@@ -12,7 +12,9 @@ public interface NewUserDtoToUserMapper {
     NewUserDtoToUserMapper INSTANCE = Mappers.getMapper(NewUserDtoToUserMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(source = "password", target = "encryptedPassword")
     User toEntity(NewUserDto newUserDto);
 
+    @Mapping(source = "encryptedPassword", target = "password")
     NewUserDto toDto(User user);
 }
