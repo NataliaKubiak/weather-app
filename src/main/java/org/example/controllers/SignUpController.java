@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/signup")
+@RequestMapping("/sign-up")
 public class SignUpController {
 
     private final UserService userService;
