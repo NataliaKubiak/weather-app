@@ -22,6 +22,8 @@ dependencies {
     implementation "org.springframework:spring-web:${springVersion}"
     implementation "org.springframework:spring-webmvc:${springVersion}"
     implementation "org.springframework:spring-orm:${springVersion}"
+    //password encryption
+    implementation 'org.springframework.security:spring-security-crypto:6.4.2'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     //чтобы использовать @PostConstruct & @PreDestroy
