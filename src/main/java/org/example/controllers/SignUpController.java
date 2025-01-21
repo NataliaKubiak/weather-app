@@ -52,6 +52,8 @@ public class SignUpController {
             return "sign-up";  // возвращаем на форму с ошибками
         }
 
+        UserDto registeredUser = userService.registerUser(newUserDto);
+
         return "redirect:/index";  // успешная регистрация
     }
 }

@@ -12,9 +12,9 @@ public interface NewUserDtoToUserMapper {
     NewUserDtoToUserMapper INSTANCE = Mappers.getMapper(NewUserDtoToUserMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "password", target = "encryptedPassword")
+    @Mapping(target = "encryptedPassword", ignore = true)
     User toEntity(NewUserDto newUserDto);
 
-    @Mapping(source = "encryptedPassword", target = "password")
-    NewUserDto toDto(User user);
+    //по моему мне не нужно переводить обратно в NewUserDto - тогда можно и не писать этот метод?
+//    NewUserDto toDto(User user);
 }

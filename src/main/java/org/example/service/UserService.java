@@ -37,7 +37,13 @@ public class UserService {
         return userByLogin.map(user -> userDtoToUserMapper.toDto(user));
     }
 
-//    public User saveUser(NewUserDto newUserDto) {
-//
-//    }
+    @Transactional
+    public UserDto registerUser(NewUserDto newUserDto) {
+        User user = newUserDtoToUserMapper.toEntity(newUserDto);
+        String encodedPassword = passwordEncoder.encode(newUserDto.getPassword());
+        user.setEncryptedPassword(encodedPassword);
+
+        userDao.createUser(user);
+        return userDtoToUserMapper.toDto(user);
+    }
 }
