@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/2-create-table-sessions.yaml
   - include:
       file: db/changelog/3-create-table-locations.yaml
+  - include:
+      file: db/changelog/4-add-password-length-constraint-table-users.yaml
