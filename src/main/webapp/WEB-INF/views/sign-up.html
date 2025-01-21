@@ -18,7 +18,7 @@
     <h2 class="text-center mb-5">Sign Up</h2>
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form th:method="post" th:action="@{/signup}" th:object="${newUserDto}" class="mt-4">
+            <form th:method="post" th:action="@{/sign-up}" th:object="${newUserDto}" class="mt-4">
 
                 <!-- Ошибка для паролей -->
                 <div th:if="${#fields.hasErrors('repeatPassword')}" class="mb-3">
@@ -61,15 +61,12 @@
                            th:field="*{repeatPassword}"
                            th:classappend="${#fields.hasErrors('repeatPassword') ? ' is-invalid' : ''}"
                            required/>
-<!--                    <div class="invalid-feedback"-->
-<!--                         th:if="${#fields.hasErrors('repeatPassword')}"-->
-<!--                         th:errors="*{repeatPassword}"></div>-->
                 </div>
 
                 <input type="hidden" th:name="redirect_to" value="http://localhost/"/>
 
                 <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                <p class="mt-2 text-center">Already have an account? <a href="#">Sign in here</a></p>
+                <p class="mt-2 text-center">Already have an account? <a href="/sign-in">Sign in here</a></p>
             </form>
         </div>
     </div>
