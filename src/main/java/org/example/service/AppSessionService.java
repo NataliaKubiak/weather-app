@@ -5,6 +5,7 @@ import org.example.entities.User;
 import org.example.repository.AppSessionDao;
 import org.example.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,5 +56,12 @@ public class AppSessionService {
     @Transactional
     public void deleteSessionById(String sessionId) {
         appSessionDao.deleteById(sessionId);
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 3600000) //every hour
+//    @Scheduled(fixedRate = 120000) //every 2 min
+    public void cleanExpiredSessions() {
+        appSessionDao.deleteExpiredSessions(ZonedDateTime.now());
     }
 }

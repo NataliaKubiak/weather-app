@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Log4j2
@@ -40,5 +41,14 @@ public class AppSessionDao {
         if(appSession != null) {
             session.remove(appSession);
         }
+    }
+
+    public void deleteExpiredSessions(ZonedDateTime currentTime) {
+        String query = "DELETE FROM AppSession s WHERE s.expiresAt <= :currentTime";
+
+        sessionFactory.getCurrentSession()
+                .createQuery(query)
+                .setParameter("currentTime", currentTime)
+                .executeUpdate();
     }
 }
