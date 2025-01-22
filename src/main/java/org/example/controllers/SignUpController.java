@@ -61,7 +61,7 @@ public class SignUpController {
         UserDto registeredUser = userService.registerUser(newUserDto);
         createSessionAndCookie(response, registeredUser.getId());
 
-        return "redirect:/index";  // успешная регистрация
+        return "redirect:/home";  // успешная регистрация
     }
 
     private void createSessionAndCookie(HttpServletResponse response, int userId) {

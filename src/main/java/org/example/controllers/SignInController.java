@@ -59,7 +59,7 @@ public class SignInController {
         UserDto userDto = maybeUser.get();
         createSessionAndCookie(response, userDto.getId());
 
-        return "redirect:/index";  // успешная регистрация
+        return "redirect:/home";  // успешная регистрация
     }
 
     private void createSessionAndCookie(HttpServletResponse response, int userId) {
