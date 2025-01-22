@@ -10,13 +10,15 @@
 
 <nav class="navbar navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/home">
+    <a class="navbar-brand" th:href="@{/home}">
       <img th:src="@{/static/images/weather-app.png}" alt="Weather App Logo" width="30" height="24" class="d-inline-block align-text-top">
       Weather Tracker
     </a>
     <div class="d-flex align-items-center">
       <span class="navbar-text me-3">zhukovsd</span>
-      <button class="btn btn-outline-danger">Sign out</button>
+      <form th:action="@{/sign-out}" method="post">
+        <button type="submit" class="btn btn-outline-danger">Sign out</button>
+      </form>
     </div>
   </div>
 </nav>

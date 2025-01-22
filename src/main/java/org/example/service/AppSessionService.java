@@ -1,28 +1,29 @@
 package org.example.service;
 
-import org.example.entities.Session;
+import org.example.entities.AppSession;
 import org.example.entities.User;
-import org.example.repository.SessionDao;
+import org.example.repository.AppSessionDao;
 import org.example.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class SessionService {
+public class AppSessionService {
 
     private static final long SESSION_DURATION = 2L;
 
-    private final SessionDao sessionDao;
+    private final AppSessionDao appSessionDao;
     private final UserDao userDao;
 
     @Autowired
-    public SessionService(SessionDao sessionDao, UserDao userDao) {
-        this.sessionDao = sessionDao;
+    public AppSessionService(AppSessionDao appSessionDao, UserDao userDao) {
+        this.appSessionDao = appSessionDao;
         this.userDao = userDao;
     }
 
@@ -33,21 +34,26 @@ public class SessionService {
 
         String sessionId = UUID.randomUUID().toString();
 
-        Session session = Session.builder()
+        AppSession appSession = AppSession.builder()
                 .id(sessionId)
                 .user(user)
-                .expiresAt(ZonedDateTime.now().plusHours(SESSION_DURATION))
+                .expiresAt(ZonedDateTime.now(ZoneId.of("UTC")).plusHours(SESSION_DURATION))
                 .build();
 
-        sessionDao.createSession(session);
+        appSessionDao.createSession(appSession);
         return sessionId;
     }
 
     @Transactional
     public boolean isValidSession(String  sessionId) {
-        Optional<Session> maybeSession = sessionDao.findById(sessionId);
+        Optional<AppSession> maybeSession = appSessionDao.findById(sessionId);
 
         return maybeSession.isPresent() &&
                 maybeSession.get().getExpiresAt().isAfter(ZonedDateTime.now());
+    }
+
+    @Transactional
+    public void deleteSessionById(String sessionId) {
+        appSessionDao.deleteById(sessionId);
     }
 }

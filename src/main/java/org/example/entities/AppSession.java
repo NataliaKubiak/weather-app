@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +14,7 @@ import java.util.Date;
 @Builder
 @Entity
 @Table(name = "sessions")
-public class Session {
+public class AppSession {
 
     @Id
     private String id;

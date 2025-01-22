@@ -3,10 +3,9 @@ package org.example.controllers;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.example.entities.User;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
-import org.example.service.SessionService;
+import org.example.service.AppSessionService;
 import org.example.service.UserService;
 import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,12 @@ import java.util.Optional;
 public class SignUpController {
 
     private final UserService userService;
-    private final SessionService sessionService;
+    private final AppSessionService appSessionService;
 
     @Autowired
-    public SignUpController(UserService userService, SessionService sessionService) {
+    public SignUpController(UserService userService, AppSessionService appSessionService) {
         this.userService = userService;
-        this.sessionService = sessionService;
+        this.appSessionService = appSessionService;
     }
 
     @GetMapping()
@@ -65,7 +64,7 @@ public class SignUpController {
     }
 
     private void createSessionAndCookie(HttpServletResponse response, int userId) {
-        String sessionId = sessionService.createSession(userId);
+        String sessionId = appSessionService.createSession(userId);
 
         Cookie cookie = new Cookie("SESSION_ID", sessionId);
         cookie.setHttpOnly(true);

@@ -3,7 +3,7 @@ package org.example.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
-import org.example.controllers.interceptors.SessionInterceptor;
+import org.example.controllers.interceptors.AppSessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -132,8 +132,8 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        SessionInterceptor sessionInterceptor = applicationContext.getBean(SessionInterceptor.class);
-        registry.addInterceptor(sessionInterceptor)
+        AppSessionInterceptor appSessionInterceptor = applicationContext.getBean(AppSessionInterceptor.class);
+        registry.addInterceptor(appSessionInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/static/**", "/sign-in", "/sign-up");
     }

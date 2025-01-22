@@ -4,7 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.UserDto;
-import org.example.service.SessionService;
+import org.example.service.AppSessionService;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/sign-in")
 public class SignInController {
 
     private final UserService userService;
-    private final SessionService sessionService;
+    private final AppSessionService appSessionService;
 
     @Autowired
-    public SignInController(UserService userService, SessionService sessionService) {
+    public SignInController(UserService userService, AppSessionService appSessionService) {
         this.userService = userService;
-        this.sessionService = sessionService;
+        this.appSessionService = appSessionService;
     }
 
     @GetMapping()
@@ -63,7 +62,7 @@ public class SignInController {
     }
 
     private void createSessionAndCookie(HttpServletResponse response, int userId) {
-        String sessionId = sessionService.createSession(userId);
+        String sessionId = appSessionService.createSession(userId);
 
         Cookie cookie = new Cookie("SESSION_ID", sessionId);
         cookie.setHttpOnly(true);
