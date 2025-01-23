@@ -54,6 +54,12 @@ public class AppSessionService {
     }
 
     @Transactional
+    public AppSession getSessionById(String sessionId) {
+        // TODO: 21/01/2025 заменить RuntimeException на что-то meaningful
+        return appSessionDao.findById(sessionId).orElseThrow(() -> new RuntimeException());
+    }
+
+    @Transactional
     public void deleteSessionById(String sessionId) {
         appSessionDao.deleteById(sessionId);
     }
