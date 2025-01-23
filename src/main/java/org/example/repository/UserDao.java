@@ -26,7 +26,7 @@ public class UserDao {
     }
 
     public Optional<User> getUserByLogin(String login) {
-        log.debug("Searching for User with login: {}", login);
+        log.info("Searching for User with login: {}", login);
         Session session = sessionFactory.getCurrentSession();
 
         return session.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class)
@@ -35,7 +35,7 @@ public class UserDao {
     }
 
     public User createUser(User user) {
-        log.debug("Saving User: {}", user);
+        log.info("Saving User: {}", user);
 
         sessionFactory.getCurrentSession().persist(user);
         return user;
