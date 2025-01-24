@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.example.entities.Location;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
+import org.example.entities.dto.UserDto;
 import org.example.entities.dto.WeatherDataDto;
 import org.example.repository.LocationDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +59,8 @@ public class OpenWeatherService {
     }
 
     @Transactional
-    public List<WeatherDataDto> getWeatherForLocationsOf(User user) throws JsonProcessingException {
-        List<Location> locationsByUserId = locationDao.getLocationsByUserId(user.getId());
+    public List<WeatherDataDto> getWeatherForLocationsOf(UserDto userDto) throws JsonProcessingException {
+        List<Location> locationsByUserId = locationDao.getLocationsByUserId(userDto.getId());
         List<WeatherDataDto> weatherDataList = new ArrayList<>();
 
         for(Location location : locationsByUserId) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
+import org.example.entities.dto.UserDto;
 import org.example.service.AppSessionService;
 import org.example.service.OpenWeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,8 @@ public class SearchController {
                            @RequestParam("city") String city,
                            Model model) throws UnsupportedEncodingException, JsonProcessingException {
 
-        // TODO: 23/01/2025 тут вместо Сущностей сделать возврат DTO
-        AppSession session = appSessionService.getSessionById(sessionId);
-        User user = session.getUser();
-        model.addAttribute("username", user.getLogin());
+        UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
+        model.addAttribute("username", userDto.getLogin());
 
         model.addAttribute("city", city);
         // TODO: 23/01/2025 обработать ошибки когда город не найден или от API возвращаются 4xx 5xx

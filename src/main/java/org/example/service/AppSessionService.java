@@ -2,6 +2,8 @@ package org.example.service;
 
 import org.example.entities.AppSession;
 import org.example.entities.User;
+import org.example.entities.dto.UserDto;
+import org.example.entities.mappers.UserDtoToUserMapper;
 import org.example.repository.AppSessionDao;
 import org.example.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ public class AppSessionService {
 
     private final AppSessionDao appSessionDao;
     private final UserDao userDao;
+
+    private final UserDtoToUserMapper userDtoToUserMapper = UserDtoToUserMapper.INSTANCE;
 
     @Autowired
     public AppSessionService(AppSessionDao appSessionDao, UserDao userDao) {
@@ -54,9 +58,12 @@ public class AppSessionService {
     }
 
     @Transactional
-    public AppSession getSessionById(String sessionId) {
+    public UserDto getUserDtoBySessionId(String sessionId) {
         // TODO: 21/01/2025 заменить RuntimeException на что-то meaningful
-        return appSessionDao.findById(sessionId).orElseThrow(() -> new RuntimeException());
+        AppSession appSession = appSessionDao.findById(sessionId).orElseThrow(() -> new RuntimeException());
+
+        User user = appSession.getUser();
+        return userDtoToUserMapper.toDto(user);
     }
 
     @Transactional

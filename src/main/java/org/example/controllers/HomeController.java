@@ -5,11 +5,11 @@ import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.RemoveLocationDto;
+import org.example.entities.dto.UserDto;
 import org.example.entities.dto.WeatherDataDto;
 import org.example.service.AppSessionService;
 import org.example.service.LocationService;
 import org.example.service.OpenWeatherService;
-import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,11 +38,10 @@ public class HomeController {
     public String showPage(@CookieValue(value="SESSION_ID", required = false) String sessionId,
                            Model model) throws JsonProcessingException {
 
-        AppSession session = appSessionService.getSessionById(sessionId);
-        User user = session.getUser();
-        model.addAttribute("username", user.getLogin());
+        UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
+        model.addAttribute("username", userDto.getLogin());
 
-        List<WeatherDataDto> weatherDataList = openWeatherService.getWeatherForLocationsOf(user);
+        List<WeatherDataDto> weatherDataList = openWeatherService.getWeatherForLocationsOf(userDto);
         model.addAttribute("weatherDataList", weatherDataList);
 
         return "home";
@@ -52,8 +51,8 @@ public class HomeController {
     public String addLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
                               @ModelAttribute("location") LocationResponseDto locationResponseDto) {
 
-        User user = appSessionService.getSessionById(sessionId).getUser();
-        locationService.saveLocationForUser(locationResponseDto, user);
+        UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
+        locationService.saveLocationForUser(locationResponseDto, userDto);
 
         return "redirect:/home";
     }
@@ -62,8 +61,8 @@ public class HomeController {
     public String deleteLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
                                  @ModelAttribute("removeLocation")RemoveLocationDto removeLocationDto) {
 
-        User user = appSessionService.getSessionById(sessionId).getUser();
-        locationService.removeLocationForUser(removeLocationDto, user);
+        UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
+        locationService.removeLocationForUser(removeLocationDto, userDto);
 
         return "redirect:/home";
     }

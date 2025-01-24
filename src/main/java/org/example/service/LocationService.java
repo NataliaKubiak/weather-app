@@ -4,6 +4,8 @@ import org.example.entities.Location;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.RemoveLocationDto;
+import org.example.entities.dto.UserDto;
+import org.example.entities.mappers.UserDtoToUserMapper;
 import org.example.repository.LocationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +16,17 @@ public class LocationService {
 
     private final LocationDao locationDao;
 
+    private final UserDtoToUserMapper userDtoToUserMapper = UserDtoToUserMapper.INSTANCE;
+
     @Autowired
     public LocationService(LocationDao locationDao) {
         this.locationDao = locationDao;
     }
 
     @Transactional
-    public Location saveLocationForUser(LocationResponseDto locationResponseDto, User user) {
+    public Location saveLocationForUser(LocationResponseDto locationResponseDto, UserDto userDto) {
+        User user = userDtoToUserMapper.toEntity(userDto);
+
         // TODO: 23/01/2025 можно ли написать маппер вместо ручного маппинга как тут?
         Location location = Location.builder()
                 .name(locationResponseDto.getName())
@@ -34,15 +40,15 @@ public class LocationService {
     }
 
     @Transactional
-    public void removeLocationForUser(RemoveLocationDto removeLocationDto, User user) {
+    public void removeLocationForUser(RemoveLocationDto removeLocationDto, UserDto userDto) {
         locationDao.deleteLocationByNameForUser(
                 removeLocationDto.getName(),
-                user.getId()
+                userDto.getId()
         );
 
         locationDao.deleteLocationByCoordinatesForUser(
                 removeLocationDto.getLongitude(),
-                removeLocationDto.getLatitude(), user.getId()
+                removeLocationDto.getLatitude(), userDto.getId()
         );
     }
 }
