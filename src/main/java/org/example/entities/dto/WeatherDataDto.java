@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Data
@@ -41,7 +42,10 @@ public class WeatherDataDto {
     private void unpackWeather(List<Map<String, Object>> weatherList) {
         if (weatherList != null && !weatherList.isEmpty()) {
             Map<String, Object> weather = weatherList.get(0);
+
             this.description = (String) weather.get("description");
+            description = makeFirstLetterCapital(description);
+
             this.icon = (String) weather.get("icon");
         }
     }
@@ -51,5 +55,12 @@ public class WeatherDataDto {
         this.temp = (int) Math.round((double) main.get("temp"));
         this.feelsLike = (int) Math.round((double) main.get("feels_like"));
         this.humidity = (int) main.get("humidity");
+    }
+
+    private String makeFirstLetterCapital(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1).toLowerCase(Locale.ROOT);
     }
 }
