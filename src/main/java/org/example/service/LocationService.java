@@ -3,12 +3,11 @@ package org.example.service;
 import org.example.entities.Location;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
+import org.example.entities.dto.RemoveLocationDto;
 import org.example.repository.LocationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class LocationService {
@@ -30,14 +29,20 @@ public class LocationService {
                 .longitude(locationResponseDto.getLongitude())
                 .build();
 
-        // TODO: 23/01/2025 если у этого юзера уже есть локация с такими координатами или именем?
-
         locationDao.createLocation(location);
         return location;
     }
 
     @Transactional
-    public void removeLocationForUser(String locationName, User user) {
-        locationDao.deleteLocationForUser(locationName, user.getId());
+    public void removeLocationForUser(RemoveLocationDto removeLocationDto, User user) {
+        locationDao.deleteLocationByNameForUser(
+                removeLocationDto.getName(),
+                user.getId()
+        );
+
+        locationDao.deleteLocationByCoordinatesForUser(
+                removeLocationDto.getLongitude(),
+                removeLocationDto.getLatitude(), user.getId()
+        );
     }
 }

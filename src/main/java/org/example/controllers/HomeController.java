@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
+import org.example.entities.dto.RemoveLocationDto;
 import org.example.entities.dto.WeatherDataDto;
 import org.example.service.AppSessionService;
 import org.example.service.LocationService;
@@ -59,10 +60,10 @@ public class HomeController {
 
     @PostMapping("/delete")
     public String deleteLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
-            @ModelAttribute("name") String locationName) {
+                                 @ModelAttribute("removeLocation")RemoveLocationDto removeLocationDto) {
 
         User user = appSessionService.getSessionById(sessionId).getUser();
-        locationService.removeLocationForUser(locationName, user);
+        locationService.removeLocationForUser(removeLocationDto, user);
 
         return "redirect:/home";
     }

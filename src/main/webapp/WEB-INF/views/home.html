@@ -60,8 +60,10 @@
 
             <!-- Кнопка для удаления карточки -->
             <div class="position-absolute weather-card-delete-form">
-              <form th:action="@{/home/delete}" method="post">
+              <form th:action="@{/home/delete}" method="post" th:object="${removeLocation}">
                 <input type="hidden" th:name="name" th:value="${weather.name}"/>
+                <input type="hidden" th:name="latitude" th:value="${weather.latitude}"/>
+                <input type="hidden" th:name="longitude" th:value="${weather.longitude}"/>
                 <button type="submit" class="btn-close" aria-label="Delete"></button>
               </form>
             </div>

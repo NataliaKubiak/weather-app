@@ -51,7 +51,7 @@ public class LocationDao {
                 .list();
     }
 
-    public void deleteLocationForUser(String locationName, int userId) {
+    public boolean deleteLocationByNameForUser(String locationName, int userId) {
         Session session = sessionFactory.getCurrentSession();
 
         Optional<Location> locationToDelete = session.createQuery(
@@ -62,6 +62,32 @@ public class LocationDao {
                 .setParameter("userId", userId)
                 .uniqueResultOptional();
 
-        locationToDelete.ifPresent(session::remove);
+        if (locationToDelete.isPresent()) {
+            session.remove(locationToDelete.get());
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean deleteLocationByCoordinatesForUser(double longitude, double latitude, int userId) {
+        Session session = sessionFactory.getCurrentSession();
+
+        Optional<Location> locationToDelete = session.createQuery(
+                        "SELECT l FROM Location l " +
+                                "WHERE l.latitude = :latitude " +
+                                "AND l.longitude = :longitude " +
+                                "AND l.user.id = :userId", Location.class)
+                .setParameter("latitude", latitude)
+                .setParameter("longitude", longitude)
+                .setParameter("userId", userId)
+                .uniqueResultOptional();
+
+        if (locationToDelete.isPresent()) {
+            session.remove(locationToDelete.get());
+            return true;
+        }
+
+        return false;
     }
 }

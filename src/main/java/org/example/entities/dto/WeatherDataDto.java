@@ -33,9 +33,21 @@ public class WeatherDataDto {
     @JsonProperty("humidity")
     private int humidity;
 
+    @JsonProperty("lon")
+    private double longitude;
+
+    @JsonProperty("lat")
+    private double latitude;
+
     @JsonProperty("sys")
     private void unpackSys(Map<String, Object> sys) {
         this.country = (String) sys.get("country");
+    }
+
+    @JsonProperty("coord")
+    private void unpackCoord(Map<String, Double> coord) {
+        this.longitude = coord.get("lon");
+        this.latitude = coord.get("lat");
     }
 
     @JsonProperty("weather")
