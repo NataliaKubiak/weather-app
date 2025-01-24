@@ -27,20 +27,28 @@
     <div class="container mt-4">
 
         <div class="d-flex my-4">
-            <form th:action="@{/search}" method="get" class="d-flex w-100">
-                <div class="input-group location-search-input-group me-3">
-                    <input class="form-control"
-                           type="text"
-                           th:name="city"
-                           th:value="${city != null ? city : ''}"
-                           placeholder="Enter location"
-                           required>
-                    <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
-                            onclick="this.previousElementSibling.value=''">
-                        &times;
-                    </button>
+            <form th:action="@{/search}" method="get" class="d-flex w-100 align-items-start">
+                <div class="flex-grow-1 me-3">
+                    <div class="input-group">
+                        <input class="form-control"
+                               type="text"
+                               th:name="city"
+                               th:value="${city != null ? city : ''}"
+                               th:classappend="${error != null} ? 'is-invalid' : ''"
+                               placeholder="Enter location"
+                               required>
+                        <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
+                                onclick="this.previousElementSibling.value=''">
+                            &times;
+                        </button>
+                    </div>
+                    <div th:if="${error != null}" class="text-danger mt-1" style="font-size: 0.875rem;">
+                        <p th:text="${error}" class="mb-0"></p>
+                    </div>
                 </div>
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <div>
+                    <button class="btn btn-outline-success h-100" type="submit">Search</button>
+                </div>
             </form>
         </div>
 

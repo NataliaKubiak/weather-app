@@ -1,25 +1,30 @@
 package org.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.log4j.Log4j2;
 import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.UserDto;
+import org.example.exceptions.LocationNotFoundException;
 import org.example.service.AppSessionService;
 import org.example.service.OpenWeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/search")
+@Log4j2
 public class SearchController {
 
     private final AppSessionService appSessionService;
@@ -39,10 +44,17 @@ public class SearchController {
         UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
         model.addAttribute("username", userDto.getLogin());
 
+        // TODO: 24/01/2025 написать обработку city из параметра (там пробелы заменяются на + итд)
         model.addAttribute("city", city);
-        // TODO: 23/01/2025 обработать ошибки когда город не найден или от API возвращаются 4xx 5xx
-        List<LocationResponseDto> locations = openWeatherService.getLocationByCity(city);
-        model.addAttribute("locations", locations);
+
+        try {
+            List<LocationResponseDto> locations = openWeatherService.getLocationByCity(city);
+            model.addAttribute("locations", locations);
+
+        } catch (LocationNotFoundException e) {
+            model.addAttribute("error", "Location not found.");
+            return "search-results";
+        }
 
         return "search-results";
     }

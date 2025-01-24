@@ -3,8 +3,8 @@ package org.example.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
+import org.example.exceptions.LocationNotFoundException;
 import org.example.entities.Location;
-import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.UserDto;
 import org.example.entities.dto.WeatherDataDto;
@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -27,7 +29,7 @@ import java.util.List;
 public class OpenWeatherService {
 
     private final RestTemplate restTemplate;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private final LocationDao locationDao;
 
@@ -53,7 +55,13 @@ public class OpenWeatherService {
 
         log.info("Generated URL = {}", url);
 
-        String jsonString = restTemplate.getForObject(url, String.class);
+        String jsonString = "";
+        try {
+            jsonString = restTemplate.getForObject(url, String.class);
+
+        } catch (RestClientException ex) {
+            handleApiError(ex);
+        }
 
         return List.of(mapper.readValue(jsonString, LocationResponseDto.class));
     }
@@ -63,7 +71,7 @@ public class OpenWeatherService {
         List<Location> locationsByUserId = locationDao.getLocationsByUserId(userDto.getId());
         List<WeatherDataDto> weatherDataList = new ArrayList<>();
 
-        for(Location location : locationsByUserId) {
+        for (Location location : locationsByUserId) {
 
             String url = UriComponentsBuilder.fromUriString("https://api.openweathermap.org/data/2.5/weather")
                     .queryParam("lat", location.getLatitude())
@@ -74,12 +82,31 @@ public class OpenWeatherService {
 
             log.info("Generated URL = {}", url);
 
-            String jsonString = restTemplate.getForObject(url, String.class);
+            String jsonString = "";
+            try {
+                jsonString = restTemplate.getForObject(url, String.class);
+
+            } catch (RestClientException ex) {
+                handleApiError(ex);
+            }
+
             WeatherDataDto weatherDataDto = mapper.readValue(jsonString, WeatherDataDto.class);
 
             weatherDataList.add(weatherDataDto);
         }
 
         return weatherDataList;
+    }
+
+    private void handleApiError(RestClientException exception) {
+        if (exception instanceof HttpClientErrorException clientError) {
+            if (clientError.getStatusCode().value() == 404) { // 404 - Not Found
+                log.warn("Location not found: {}", clientError.getResponseBodyAsString());
+                throw new LocationNotFoundException("Location not found");
+            }
+        }
+
+        log.error("Unexpected error occurred while calling external API: {}", exception.getMessage());
+        throw new RuntimeException("Unexpected error occurred while calling external API", exception);
     }
 }
