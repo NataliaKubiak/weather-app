@@ -52,8 +52,8 @@ public class WeatherDataDto {
 
     @JsonProperty("main")
     private void unpackMain(Map<String, Object> main) {
-        this.temp = (int) Math.round((double) main.get("temp"));
-        this.feelsLike = (int) Math.round((double) main.get("feels_like"));
+        this.temp = (int) Math.round(((Number) main.get("temp")).doubleValue());
+        this.feelsLike = (int) Math.round(((Number) main.get("feels_like")).doubleValue());
         this.humidity = (int) main.get("humidity");
     }
 
