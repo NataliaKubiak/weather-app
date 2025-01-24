@@ -35,4 +35,9 @@ public class LocationService {
         locationDao.createLocation(location);
         return location;
     }
+
+    @Transactional
+    public void removeLocationForUser(String locationName, User user) {
+        locationDao.deleteLocationForUser(locationName, user.getId());
+    }
 }

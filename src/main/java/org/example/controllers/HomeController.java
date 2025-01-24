@@ -49,14 +49,20 @@ public class HomeController {
 
     @PostMapping("/add")
     public String addLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
-                              @ModelAttribute("location") LocationResponseDto locationResponseDto,
-                              Model model) {
+                              @ModelAttribute("location") LocationResponseDto locationResponseDto) {
 
-        AppSession session = appSessionService.getSessionById(sessionId);
-        User user = session.getUser();
-        model.addAttribute("username", user.getLogin());
-
+        User user = appSessionService.getSessionById(sessionId).getUser();
         locationService.saveLocationForUser(locationResponseDto, user);
+
+        return "redirect:/home";
+    }
+
+    @PostMapping("/delete")
+    public String deleteLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
+            @ModelAttribute("name") String locationName) {
+
+        User user = appSessionService.getSessionById(sessionId).getUser();
+        locationService.removeLocationForUser(locationName, user);
 
         return "redirect:/home";
     }

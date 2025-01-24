@@ -44,10 +44,7 @@
 
         <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="weather : ${weatherDataList}">
           <div class="card h-100 position-relative weather-card">
-            <!-- Кнопка для удаления карточки -->
-            <div class="position-absolute weather-card-delete-form">
-              <button class="btn-close" aria-label="Delete"></button>
-            </div>
+
             <img class="card-img-top img-fluid"
                  th:src="'https://openweathermap.org/img/wn/' + ${weather.icon} + '@4x.png'"
                  th:alt="'Weather icon: ' + ${weather.icon}">
@@ -59,6 +56,14 @@
                 <span th:text="${weather.description}">Clear sky</span>
               </p>
               <p class="card-text mb-1">Humidity: <span th:text="${weather.humidity} + '%'">70%</span></p>
+            </div>
+
+            <!-- Кнопка для удаления карточки -->
+            <div class="position-absolute weather-card-delete-form">
+              <form th:action="@{/home/delete}" method="post">
+                <input type="hidden" th:name="name" th:value="${weather.name}"/>
+                <button type="submit" class="btn-close" aria-label="Delete"></button>
+              </form>
             </div>
           </div>
         </div>
