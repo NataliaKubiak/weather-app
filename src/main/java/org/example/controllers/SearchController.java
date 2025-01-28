@@ -45,6 +45,7 @@ public class SearchController {
         model.addAttribute("username", userDto.getLogin());
 
         // TODO: 24/01/2025 написать обработку city из параметра (там пробелы заменяются на + итд)
+        //написать какие варианты надо обрабатывать
         model.addAttribute("city", city);
 
         try {
@@ -52,8 +53,7 @@ public class SearchController {
             model.addAttribute("locations", locations);
 
         } catch (LocationNotFoundException e) {
-            model.addAttribute("error", "Location not found.");
-            return "search-results";
+            throw new LocationNotFoundException("Location '" + city + "' not found.");
         }
 
         return "search-results";
