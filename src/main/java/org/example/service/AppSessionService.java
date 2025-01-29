@@ -9,6 +9,7 @@ import org.example.exceptions.UserNotFoundException;
 import org.example.repository.AppSessionDao;
 import org.example.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ import java.util.UUID;
 @Service
 public class AppSessionService {
 
-    private static final long SESSION_DURATION = 2L;
+    @Value("${session.duration.seconds}")
+    private long sessionDurationSeconds;
 
     private final AppSessionDao appSessionDao;
     private final UserDao userDao;
@@ -44,7 +46,7 @@ public class AppSessionService {
         AppSession appSession = AppSession.builder()
                 .id(sessionId)
                 .user(user)
-                .expiresAt(ZonedDateTime.now(ZoneId.of("UTC")).plusHours(SESSION_DURATION))
+                .expiresAt(ZonedDateTime.now(ZoneId.of("UTC")).plusSeconds(sessionDurationSeconds))
                 .build();
 
         appSessionDao.createSession(appSession);
@@ -74,8 +76,7 @@ public class AppSessionService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 3600000) //every hour
-//    @Scheduled(fixedRate = 120000) //every 2 min
+    @Scheduled(fixedRateString = "${session.cleanup.rate}") //prod = 1h; test = 1 min
     public void cleanExpiredSessions() {
         appSessionDao.deleteExpiredSessions(ZonedDateTime.now());
     }
