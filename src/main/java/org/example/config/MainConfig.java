@@ -82,6 +82,6 @@ public class MainConfig implements WebMvcConfigurer {
         AppSessionInterceptor appSessionInterceptor = applicationContext.getBean(AppSessionInterceptor.class);
         registry.addInterceptor(appSessionInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/static/**", "/sign-in", "/sign-up");
+                .excludePathPatterns("/static/**", "/auth/sign-in", "/auth/sign-up");
     }
 }

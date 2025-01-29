@@ -2,8 +2,6 @@ package org.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
-import org.example.entities.AppSession;
-import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.UserDto;
 import org.example.exceptions.LocationNotFoundException;
@@ -12,14 +10,12 @@ import org.example.service.OpenWeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller

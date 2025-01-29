@@ -16,7 +16,7 @@
     </a>
     <div class="d-flex align-items-center">
       <span class="navbar-text me-3" th:text="${username}">Username</span>
-      <form th:action="@{/sign-out}" method="post">
+      <form th:action="@{/auth/sign-out}" method="post">
         <button type="submit" class="btn btn-outline-danger">Sign out</button>
       </form>
     </div>
@@ -49,13 +49,13 @@
                  th:src="'https://openweathermap.org/img/wn/' + ${weather.icon} + '@4x.png'"
                  th:alt="'Weather icon: ' + ${weather.icon}">
             <div class="card-body d-flex flex-column">
-              <h1 class="card-text" th:text="${weather.temp} + '°C'">7°C</h1>
-              <h3 class="card-title" th:text="${weather.name} + ', ' + ${weather.country}">Tbilisi, GE</h3>
+              <h1 class="card-text" th:text="${weather.temp} + '°C'"></h1>
+              <h3 class="card-title" th:text="${weather.name} + ', ' + ${weather.country}"></h3>
               <p class="card-text mb-1">
-                Feels like <span th:text="${weather.feelsLike} + '°C'">2°C</span>.
-                <span th:text="${weather.description}">Clear sky</span>
+                Feels like <span th:text="${weather.feelsLike} + '°C'"></span>.
+                <span th:text="${weather.description}"></span>
               </p>
-              <p class="card-text mb-1">Humidity: <span th:text="${weather.humidity} + '%'">70%</span></p>
+              <p class="card-text mb-1">Humidity: <span th:text="${weather.humidity} + '%'"></span></p>
             </div>
 
             <!-- Кнопка для удаления карточки -->

@@ -1,11 +1,16 @@
 package org.example.controllers;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.example.utils.AppSessionUtil;
 import org.example.entities.dto.LoginUserDto;
+import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
 import org.example.service.AppSessionService;
 import org.example.service.UserRegistrationService;
+import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,26 +23,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/sign-in")
-public class SignInController {
+@RequestMapping("/auth")
+public class AuthController {
 
     private final UserRegistrationService userRegistrationService;
     private final AppSessionService appSessionService;
 
     @Autowired
-    public SignInController(UserRegistrationService userRegistrationService, AppSessionService appSessionService) {
+    public AuthController(UserRegistrationService userRegistrationService, AppSessionService appSessionService) {
         this.userRegistrationService = userRegistrationService;
         this.appSessionService = appSessionService;
     }
 
-    @GetMapping()
-    public String showPage(Model model) {
+    @GetMapping("/sign-up")
+    public String showSignUpPage(Model model) {
+        model.addAttribute("newUserDto", new NewUserDto());
+
+        return "sign-up";
+    }
+
+    @PostMapping("/sign-up")
+    public String signUp(@ModelAttribute("newUserDto") @Valid NewUserDto newUserDto,
+                         BindingResult bindingResult,
+                         HttpServletResponse response) {
+
+        if (!Validator.isSamePassword(newUserDto.getPassword(), newUserDto.getRepeatPassword())) {
+            bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
+        }
+
+        Optional<UserDto> maybeUser = userRegistrationService.findUserByLogin(newUserDto.getLogin());
+        if (maybeUser.isPresent()) {
+            bindingResult.rejectValue("login", "user.already.exists", "Account with this username already exists.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "sign-up";  // возвращаем на форму с ошибками
+        }
+
+        UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
+        createSessionAndCookie(response, registeredUser.getId());
+
+        return "redirect:/home";  // успешная регистрация
+    }
+
+    @GetMapping("/sign-in")
+    public String showSignInPage(Model model) {
         model.addAttribute("loginUserDto", new LoginUserDto());
 
         return "sign-in";
     }
 
-    @PostMapping()
+    @PostMapping("/sign-in")
     public String signIn(@ModelAttribute("loginUserDto") LoginUserDto loginUserDto,
                          BindingResult bindingResult,
                          HttpServletResponse response) {
@@ -59,6 +95,22 @@ public class SignInController {
         createSessionAndCookie(response, userDto.getId());
 
         return "redirect:/home";  // успешная регистрация
+    }
+
+    @PostMapping("/sign-out")
+    public String signOut(HttpServletRequest request, HttpServletResponse response) {
+        String sessionId = AppSessionUtil.getSessionIdFromCookies(request.getCookies());
+
+        if(sessionId != null) {
+            appSessionService.deleteSessionById(sessionId);
+        }
+
+        Cookie cookie = new Cookie("SESSION_ID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/auth/sign-in";
     }
 
     private void createSessionAndCookie(HttpServletResponse response, int userId) {

@@ -19,7 +19,7 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form th:method="post" th:action="@{/sign-in}" th:object="${loginUserDto}" class="mt-4">
+            <form th:method="post" th:action="@{/auth/sign-in}" th:object="${loginUserDto}" class="mt-4">
 
                 <!-- Ошибка для паролей -->
                 <div th:if="${#fields.hasErrors('password')}" class="mb-3">
@@ -50,10 +50,10 @@
                            required/>
                 </div>
 
-                <input type="hidden" name="redirect_to" value="http://localhost/"/>
+<!--                <input type="hidden" name="redirect_to" value="http://localhost/"/>-->
 
                 <button type="submit" class="btn btn-primary w-100 mt-3">Sign In</button>
-                <p class="mt-2 text-center">Don't have an account? <a th:href="@{/sign-up}">Sign up here</a></p>
+                <p class="mt-2 text-center">Don't have an account? <a th:href="@{/auth/sign-up}">Sign up here</a></p>
             </form>
         </div>
     </div>

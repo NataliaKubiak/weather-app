@@ -2,7 +2,7 @@ package org.example.controllers.interceptors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.controllers.AppSessionUtil;
+import org.example.utils.AppSessionUtil;
 import org.example.service.AppSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class AppSessionInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        response.sendRedirect("/sign-in");
+        response.sendRedirect("/auth/sign-in");
         return false;
     }
 }

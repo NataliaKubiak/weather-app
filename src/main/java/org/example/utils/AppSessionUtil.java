@@ -1,4 +1,4 @@
-package org.example.controllers;
+package org.example.utils;
 
 import jakarta.servlet.http.Cookie;
 import lombok.experimental.UtilityClass;
