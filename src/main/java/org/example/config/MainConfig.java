@@ -28,26 +28,14 @@ import java.util.Properties;
 @ComponentScan("org.example")
 @EnableWebMvc
 @EnableTransactionManagement
-@PropertySource("classpath:application.properties")
+//@PropertySource("classpath:application.properties")
 @EnableScheduling
-public class SpringConfig implements WebMvcConfigurer {
+public class MainConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
 
-    @Value("${dev.db.driver}")
-    private String devDbDriver;
-
-    @Value("${dev.db.url}")
-    private String devDbUrl;
-
-    @Value("${dev.db.username}")
-    private String devDbUsername;
-
-    @Value("${dev.db.password}")
-    private String devDbPassword;
-
     @Autowired
-    public SpringConfig(ApplicationContext applicationContext) {
+    public MainConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -82,59 +70,6 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");  // Указываем путь через classpath
-    }
-
-    @Bean
-    public HikariDataSource dataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setDriverClassName(devDbDriver);
-        config.setJdbcUrl(devDbUrl);
-        config.setUsername(devDbUsername);
-        config.setPassword(devDbPassword);
-
-        // Оптимизация для стабильной работы
-        config.setMaximumPoolSize(10); // Максимальное количество соединений в пуле
-        config.setMinimumIdle(2); // Минимальное количество неиспользуемых соединений
-        config.setIdleTimeout(300000); // Таймаут простоя соединения (в миллисекундах)
-        config.setConnectionTimeout(30000); // Максимальное время ожидания соединения
-        config.setLeakDetectionThreshold(2000); // Включение обнаружения утечек (2 секунды)
-
-        return new HikariDataSource(config);
-    }
-
-    @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setPackagesToScan("org.example");
-        factoryBean.setHibernateProperties(hibernateProperties());
-        return factoryBean;
-    }
-
-    private Properties hibernateProperties() {
-        Properties properties = new Properties();
-        properties.put("hibernate.show_sql", "true");
-        properties.put("hibernate.format_sql", "true");
-        properties.put("hibernate.hbm2ddl.auto", "none");
-        properties.put("hibernate.physical_naming_strategy",
-                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl");
-        return properties;
-    }
-
-    @Bean
-    public HibernateTransactionManager transactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-        return transactionManager;
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.yaml");
-        liquibase.setContexts("dev");
-        return liquibase;
     }
 
     @Bean
