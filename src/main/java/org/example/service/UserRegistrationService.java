@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserRegistrationService {
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -24,7 +24,7 @@ public class UserService {
     private final UserDtoToUserMapper userDtoToUserMapper = UserDtoToUserMapper.INSTANCE;
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserRegistrationService(UserDao userDao) {
         this.userDao = userDao;
         passwordEncoder = new BCryptPasswordEncoder();
     }
@@ -46,12 +46,6 @@ public class UserService {
         userDao.createUser(user);
         return userDtoToUserMapper.toDto(user);
     }
-
-//    @Transactional
-//    public boolean verifyUsername(String username) {
-//        Optional<User> optionalUser = userDao.getUserByLogin(username);
-//        return optionalUser.isPresent();
-//    }
 
     @Transactional
     public boolean verifyPassword(LoginUserDto loginUserDto) {
