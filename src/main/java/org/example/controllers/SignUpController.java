@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
 import org.example.service.AppSessionService;
-import org.example.service.UserService;
+import org.example.service.UserRegistrationService;
 import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,12 +23,12 @@ import java.util.Optional;
 @RequestMapping("/sign-up")
 public class SignUpController {
 
-    private final UserService userService;
+    private final UserRegistrationService userRegistrationService;
     private final AppSessionService appSessionService;
 
     @Autowired
-    public SignUpController(UserService userService, AppSessionService appSessionService) {
-        this.userService = userService;
+    public SignUpController(UserRegistrationService userRegistrationService, AppSessionService appSessionService) {
+        this.userRegistrationService = userRegistrationService;
         this.appSessionService = appSessionService;
     }
 
@@ -48,7 +48,7 @@ public class SignUpController {
             bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
         }
 
-        Optional<UserDto> maybeUser = userService.findUserByLogin(newUserDto.getLogin());
+        Optional<UserDto> maybeUser = userRegistrationService.findUserByLogin(newUserDto.getLogin());
         if (maybeUser.isPresent()) {
             bindingResult.rejectValue("login", "user.already.exists", "Account with this username already exists.");
         }
@@ -57,7 +57,7 @@ public class SignUpController {
             return "sign-up";  // возвращаем на форму с ошибками
         }
 
-        UserDto registeredUser = userService.registerUser(newUserDto);
+        UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
         createSessionAndCookie(response, registeredUser.getId());
 
         return "redirect:/home";  // успешная регистрация

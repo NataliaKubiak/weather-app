@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.UserDto;
 import org.example.service.AppSessionService;
-import org.example.service.UserService;
+import org.example.service.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +21,12 @@ import java.util.Optional;
 @RequestMapping("/sign-in")
 public class SignInController {
 
-    private final UserService userService;
+    private final UserRegistrationService userRegistrationService;
     private final AppSessionService appSessionService;
 
     @Autowired
-    public SignInController(UserService userService, AppSessionService appSessionService) {
-        this.userService = userService;
+    public SignInController(UserRegistrationService userRegistrationService, AppSessionService appSessionService) {
+        this.userRegistrationService = userRegistrationService;
         this.appSessionService = appSessionService;
     }
 
@@ -41,13 +41,13 @@ public class SignInController {
     public String signIn(@ModelAttribute("loginUserDto") LoginUserDto loginUserDto,
                          BindingResult bindingResult,
                          HttpServletResponse response) {
-        Optional<UserDto> maybeUser = userService.findUserByLogin(loginUserDto.getLogin());
+        Optional<UserDto> maybeUser = userRegistrationService.findUserByLogin(loginUserDto.getLogin());
 
         if (maybeUser.isEmpty()) {
             bindingResult.rejectValue("login", "user.not.exist", "Invalid username.");
         }
 
-        if (!userService.verifyPassword(loginUserDto)) {
+        if (!userRegistrationService.verifyPassword(loginUserDto)) {
             bindingResult.rejectValue("password", "invalid.password", "Invalid username or password.");
         }
 
