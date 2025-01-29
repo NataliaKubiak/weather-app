@@ -16,10 +16,6 @@ public class LocationResponseDto {
     @JsonProperty("country")
     private String country;
 
-    // TODO: 23/01/2025 как достать инфу про штат?
-//    @JsonProperty()
-//    private String state;
-
     @JsonProperty("lon")
     private double longitude;
 

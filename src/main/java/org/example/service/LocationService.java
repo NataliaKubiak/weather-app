@@ -27,7 +27,6 @@ public class LocationService {
     public Location saveLocationForUser(LocationResponseDto locationResponseDto, UserDto userDto) {
         User user = userDtoToUserMapper.toEntity(userDto);
 
-        // TODO: 23/01/2025 можно ли написать маппер вместо ручного маппинга как тут?
         Location location = Location.builder()
                 .name(locationResponseDto.getName())
                 .user(user)

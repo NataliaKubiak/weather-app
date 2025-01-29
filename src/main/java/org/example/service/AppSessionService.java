@@ -4,6 +4,8 @@ import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.UserDto;
 import org.example.entities.mappers.UserDtoToUserMapper;
+import org.example.exceptions.SessionNotFoundException;
+import org.example.exceptions.UserNotFoundException;
 import org.example.repository.AppSessionDao;
 import org.example.repository.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,8 @@ public class AppSessionService {
 
     @Transactional
     public String createSession(int userId) {
-        // TODO: 21/01/2025 заменить RuntimeException на что-то meaningful
-        User user = userDao.getUserById(userId).orElseThrow(() -> new RuntimeException());
+        User user = userDao.getUserById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with id = " + userId + " was not found in DataBase"));
 
         String sessionId = UUID.randomUUID().toString();
 
@@ -59,8 +61,8 @@ public class AppSessionService {
 
     @Transactional
     public UserDto getUserDtoBySessionId(String sessionId) {
-        // TODO: 21/01/2025 заменить RuntimeException на что-то meaningful
-        AppSession appSession = appSessionDao.findById(sessionId).orElseThrow(() -> new RuntimeException());
+        AppSession appSession = appSessionDao.findById(sessionId).orElseThrow(() ->
+                new SessionNotFoundException("Session with id " + sessionId + " was not found in Data Base"));
 
         User user = appSession.getUser();
         return userDtoToUserMapper.toDto(user);
