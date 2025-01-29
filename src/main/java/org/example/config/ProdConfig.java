@@ -16,7 +16,7 @@ import java.util.Properties;
 
 @Configuration
 @Profile("prod")
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-prod.properties")
 public class ProdConfig {
 
     @Value("${prod.db.driver}")

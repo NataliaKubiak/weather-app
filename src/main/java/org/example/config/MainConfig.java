@@ -28,7 +28,7 @@ import java.util.Properties;
 @ComponentScan("org.example")
 @EnableWebMvc
 @EnableTransactionManagement
-//@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-main.properties")
 @EnableScheduling
 public class MainConfig implements WebMvcConfigurer {
 
