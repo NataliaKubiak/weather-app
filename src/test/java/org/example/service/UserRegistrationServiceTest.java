@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.config.TestConfig;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
+import org.example.exceptions.UserAlreadyExistException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,7 +21,7 @@ class UserRegistrationServiceTest {
     private UserRegistrationService userRegistrationService;
 
     @Test
-    void testRegisterUser() {
+    void testRegisterUser_Successful() {
         NewUserDto newUserDto = NewUserDto.builder()
                 .login("testUser")
                 .password("test")
@@ -31,5 +32,19 @@ class UserRegistrationServiceTest {
 
         assertNotNull(userDto);
         assertEquals(userDto.getLogin(), newUserDto.getLogin());
+    }
+
+    @Test
+    void testRegisterUser_LoginIsNotUnique() {
+        NewUserDto newUserDto = NewUserDto.builder()
+                .login("testUser")
+                .password("test")
+                .repeatPassword("test")
+                .build();
+
+        UserDto userDto = userRegistrationService.registerUser(newUserDto);
+        assertNotNull(userDto);
+
+        assertThrows(UserAlreadyExistException.class, () -> userRegistrationService.registerUser(newUserDto));
     }
 }
