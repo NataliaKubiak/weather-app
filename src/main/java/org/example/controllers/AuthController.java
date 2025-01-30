@@ -54,6 +54,10 @@ public class AuthController {
             bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
         }
 
+        if (bindingResult.hasErrors()) {
+              return "sign-up";// возвращаем на форму с ошибками
+        }
+
         try {
             UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
             createSessionAndCookie(response, registeredUser.getId());
@@ -62,10 +66,7 @@ public class AuthController {
             log.warn(ex.getMessage());
 
             bindingResult.rejectValue("login", "user.already.exists", ex.getMessage());
-        }
-
-        if (bindingResult.hasErrors()) {
-            return "sign-up";  // возвращаем на форму с ошибками
+            return "sign-up";
         }
 
         return "redirect:/home";  // успешная регистрация

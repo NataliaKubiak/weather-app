@@ -2,13 +2,12 @@ package org.example.repository;
 
 import lombok.extern.log4j.Log4j2;
 import org.example.entities.User;
-import org.example.exceptions.UserAlreadyExistException;
+import org.example.exceptions.EntityAlreadyExistsException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ public class UserDao {
             log.info("User successfully saved: {}", user);
 
         } catch (ConstraintViolationException e) {
-            throw new UserAlreadyExistException("User with login '" + user.getLogin() + "' already exists", e);
+            throw new EntityAlreadyExistsException("User with login '" + user.getLogin() + "' already exists", e);
         }
 
         return user;

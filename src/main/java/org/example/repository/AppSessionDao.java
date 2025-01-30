@@ -2,8 +2,10 @@ package org.example.repository;
 
 import lombok.extern.log4j.Log4j2;
 import org.example.entities.AppSession;
+import org.example.exceptions.EntityAlreadyExistsException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +30,12 @@ public class AppSessionDao {
     public AppSession createSession(AppSession appSession) {
         log.info("Saving Session: {}", appSession);
 
-        sessionFactory.getCurrentSession().persist(appSession);
+        try {
+            sessionFactory.getCurrentSession().persist(appSession);
+
+        } catch (ConstraintViolationException e) {
+            throw new EntityAlreadyExistsException("Session with id '" + appSession.getId() + "' already exists", e);
+        }
         return appSession;
     }
 
