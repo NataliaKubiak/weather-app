@@ -25,7 +25,7 @@ dependencies {
     //password encryption
     implementation 'org.springframework.security:spring-security-crypto:6.4.2'
 
-    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     //чтобы использовать @PostConstruct & @PreDestroy
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
@@ -44,6 +44,9 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'com.zaxxer:HikariCP:6.2.1'
 
+    //test DataBase
+    implementation 'com.h2database:h2:2.2.224'
+
 //    все попробованные версии давали:
 //    17-Jan-2025 16:29:20.930
 //    SEVERE [main] org.apache.catalina.loader.WebappClassLoaderBase.checkThreadLocalMapForLeaks
@@ -58,9 +61,6 @@ dependencies {
 //    implementation 'org.liquibase:liquibase-core:4.22.0'
 //    implementation 'org.liquibase:liquibase-core:4.24.0'
     implementation 'org.liquibase:liquibase-core:4.26.0'
-
-    //test DataBase
-    implementation 'com.h2database:h2:2.2.224'
 
     //logger
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
@@ -80,6 +80,7 @@ dependencies {
 
     //tests
     testImplementation ("org.springframework:spring-test:${springVersion}")
+    testImplementation "org.springframework:spring-aop:${springVersion}"
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     testImplementation 'org.mockito:mockito-core:5.14.2'

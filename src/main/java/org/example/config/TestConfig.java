@@ -1,34 +1,67 @@
 package org.example.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.example.controllers.interceptors.AppSessionInterceptor;
+import org.example.repository.UserDao;
+import org.example.service.UserRegistrationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @Profile("test")
+@ComponentScan("org.example")
 @PropertySource("classpath:application-test.properties")
-public class TestConfig {
+@EnableWebMvc
+@EnableTransactionManagement
+public class TestConfig implements WebMvcConfigurer {
+
+    private final ApplicationContext applicationContext;
+
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    @Autowired
+    public TestConfig(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Bean
     public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setUrl(url + ";DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
     @Bean
     public LocalSessionFactoryBean sessionFactoryBean() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("org.example");
+        sessionFactory.setPackagesToScan("org.example.entities");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -40,10 +73,29 @@ public class TestConfig {
         return transactionManager;
     }
 
+    @Primary
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        return transactionManager();
+    }
+
     private Properties hibernateProperties() {
         Properties properties = new Properties();
-        properties.put("hibernate.hbm2ddl.auto", "create-drop"); // Пересоздавать схему
+        properties.put("hibernate.hbm2ddl.auto", "create-drop"); // Создавать и удалять таблицы для каждого теста
         properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         return properties;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        AppSessionInterceptor appSessionInterceptor = applicationContext.getBean(AppSessionInterceptor.class);
+        registry.addInterceptor(appSessionInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/static/**", "/auth/sign-in", "/auth/sign-up");
     }
 }
