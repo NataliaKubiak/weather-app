@@ -17,15 +17,17 @@ databaseChangeLog:
                   type: int
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_table_users
+                    referencedTableName: USERS
+                    referencedColumnNames: id
               - column:
                   name: expires_at
                   type: TIMESTAMP WITH TIME ZONE
                   constraints:
                     nullable: false
-#        - createIndex:
-#            indexName: inx_expires_at
-#            tableName: sessions
-#            columns:
-#              - column:
-#                  name: expires_at
-
+        - createIndex:
+            indexName: sessions_user_id
+            tableName: sessions
+            columns:
+              - column:
+                  name: user_id

@@ -22,6 +22,9 @@ databaseChangeLog:
                   type: int
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_table_users
+                    referencedTableName: USERS
+                    referencedColumnNames: id
               - column:
                   name: latitude
                   type: DOUBLE PRECISION
@@ -33,7 +36,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createIndex:
-            indexName: idx_user_id
+            indexName: locations_user_id
             tableName: locations
             columns:
               - column:
