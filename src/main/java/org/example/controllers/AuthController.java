@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.example.exceptions.UserAlreadyExistException;
+import org.example.exceptions.EntityAlreadyExistsException;
 import org.example.utils.AppSessionUtil;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.NewUserDto;
@@ -58,7 +58,7 @@ public class AuthController {
             UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
             createSessionAndCookie(response, registeredUser.getId());
 
-        } catch (UserAlreadyExistException ex) {
+        } catch (EntityAlreadyExistsException ex) {
             log.warn(ex.getMessage());
 
             bindingResult.rejectValue("login", "user.already.exists", ex.getMessage());
