@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.example.entities.User;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.NewUserDto;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Log4j2
 @Service
 public class UserRegistrationService {
 
@@ -31,6 +33,7 @@ public class UserRegistrationService {
 
     @Transactional
     public Optional<UserDto> findUserByLogin(String login) {
+        log.info("Looking for a user with login: {}", login);
 
         Optional<User> userByLogin = userDao.getUserByLogin(login);
 
@@ -39,23 +42,38 @@ public class UserRegistrationService {
 
     @Transactional
     public UserDto registerUser(NewUserDto newUserDto) {
+        log.info("Registering a new user: {}", newUserDto.getLogin());
+
         User user = newUserDtoToUserMapper.toEntity(newUserDto);
         String encodedPassword = passwordEncoder.encode(newUserDto.getPassword());
         user.setEncryptedPassword(encodedPassword);
 
         userDao.createUser(user);
+        log.info("User successfully registered: {}", newUserDto.getLogin());
+
         return userDtoToUserMapper.toDto(user);
     }
 
     @Transactional
     public boolean verifyPassword(LoginUserDto loginUserDto) {
+        log.info("Verifying password for user: {}", loginUserDto.getLogin());
+
         Optional<User> userByLogin = userDao.getUserByLogin(loginUserDto.getLogin());
 
         if(userByLogin.isEmpty()) {
+            log.warn("User not found during password verification: {}", loginUserDto.getLogin());
             return false;
         }
 
         String encryptedPassword = userByLogin.get().getEncryptedPassword();
-        return passwordEncoder.matches(loginUserDto.getPassword(), encryptedPassword);
+        boolean isMatch = passwordEncoder.matches(loginUserDto.getPassword(), encryptedPassword);
+
+        if (isMatch) {
+            log.info("Password verified successfully for user: {}", loginUserDto.getLogin());
+        } else {
+            log.warn("Password verification failed for user: {}", loginUserDto.getLogin());
+        }
+
+        return isMatch;
     }
 }
