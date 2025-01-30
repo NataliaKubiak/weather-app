@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.example.exceptions.UserAlreadyExistException;
 import org.example.utils.AppSessionUtil;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.NewUserDto;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
@@ -51,17 +54,19 @@ public class AuthController {
             bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
         }
 
-        Optional<UserDto> maybeUser = userRegistrationService.findUserByLogin(newUserDto.getLogin());
-        if (maybeUser.isPresent()) {
-            bindingResult.rejectValue("login", "user.already.exists", "Account with this username already exists.");
+        try {
+            UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
+            createSessionAndCookie(response, registeredUser.getId());
+
+        } catch (UserAlreadyExistException ex) {
+            log.warn(ex.getMessage());
+
+            bindingResult.rejectValue("login", "user.already.exists", ex.getMessage());
         }
 
         if (bindingResult.hasErrors()) {
             return "sign-up";  // возвращаем на форму с ошибками
         }
-
-        UserDto registeredUser = userRegistrationService.registerUser(newUserDto);
-        createSessionAndCookie(response, registeredUser.getId());
 
         return "redirect:/home";  // успешная регистрация
     }
