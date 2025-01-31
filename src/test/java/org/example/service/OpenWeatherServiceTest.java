@@ -1,8 +1,11 @@
 package org.example.service;
 
 import org.example.config.TestConfig;
+import org.example.entities.Location;
+import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.exceptions.LocationNotFoundException;
+import org.example.repository.LocationDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ class OpenWeatherServiceTest {
 
     @Autowired
     private OpenWeatherService openWeatherService;
+
+    @Autowired
+    private LocationDao locationDao;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -92,5 +98,19 @@ class OpenWeatherServiceTest {
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         assertThrows(ResourceAccessException.class, () -> openWeatherService.getLocationByCity("Test"));
+    }
+
+    // TODO: 31/01/2025 тест падает и я не понимаю как так локация и юзер уже в базе
+    @Test
+    void getWeatherOfLocationsForUser_Successful() {
+        Location location = Location.builder()
+                .name("Test City2")
+                .user(new User(1, "user", "1234"))
+                .longitude(1.111)
+                .latitude(2.22)
+                .build();
+
+        locationDao.createLocation(location);
+        assertEquals(1, location.getId());
     }
 }
