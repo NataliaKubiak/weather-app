@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -112,6 +113,6 @@ public class OpenWeatherService {
         }
 
         log.error("Unexpected error occurred while calling external API: {}", exception.getMessage());
-        throw new RuntimeException("Unexpected error occurred while calling external API", exception);
+        throw new ResourceAccessException("Unexpected error occurred while calling external API");
     }
 }

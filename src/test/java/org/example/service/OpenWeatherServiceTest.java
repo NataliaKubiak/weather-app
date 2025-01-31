@@ -2,16 +2,19 @@ package org.example.service;
 
 import org.example.config.TestConfig;
 import org.example.entities.dto.LocationResponseDto;
+import org.example.exceptions.LocationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @SpringJUnitConfig(classes = TestConfig.class)
@@ -55,13 +59,14 @@ class OpenWeatherServiceTest {
                   },
                   "name": "Test",
                   "cod": 200
-                }""";
+                }
+                """;
 
         mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
-        List<LocationResponseDto> testCityList = openWeatherService.getLocationByCity("Test City");
+        List<LocationResponseDto> testCityList = openWeatherService.getLocationByCity("Test");
 
         assertNotNull(testCityList);
 
@@ -71,5 +76,21 @@ class OpenWeatherServiceTest {
         assertEquals("RU", testCityList.get(0).getCountry());
     }
 
+    @Test
+    void testGetLocationByCity_CityNotFound() {
+        mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
+        assertThrows(LocationNotFoundException.class, () -> openWeatherService.getLocationByCity("Test"));
+    }
+
+    @Test
+    void testGetLocationByCity_OpenWeatherApiNotRespond() {
+        mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        assertThrows(ResourceAccessException.class, () -> openWeatherService.getLocationByCity("Test"));
+    }
 }
