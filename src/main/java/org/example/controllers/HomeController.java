@@ -39,7 +39,7 @@ public class HomeController {
         UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
         model.addAttribute("username", userDto.getLogin());
 
-        Map<String, WeatherDataDto> weatherDataMap = openWeatherService.getWeatherForLocationsOf(userDto);
+        Map<String, WeatherDataDto> weatherDataMap = openWeatherService.getWeatherOfLocationsForUser(userDto);
         model.addAttribute("weatherDataMap", weatherDataMap);
 
         return "home";

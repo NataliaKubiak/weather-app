@@ -80,7 +80,6 @@ public class TestConfig implements WebMvcConfigurer {
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", "create-drop"); // Создавать и удалять таблицы для каждого теста
-        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         return properties;
     }
 

@@ -70,7 +70,7 @@ public class OpenWeatherService {
     }
 
     @Transactional
-    public Map<String, WeatherDataDto> getWeatherForLocationsOf(UserDto userDto) throws JsonProcessingException {
+    public Map<String, WeatherDataDto> getWeatherOfLocationsForUser(UserDto userDto) throws JsonProcessingException {
         log.info("Getting Weather for all locations for User: {}", userDto.getLogin());
 
         List<Location> locationsByUserId = locationDao.getLocationsByUserId(userDto.getId());
