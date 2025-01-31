@@ -1,8 +1,6 @@
 package org.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.example.entities.AppSession;
-import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
 import org.example.entities.dto.RemoveLocationDto;
 import org.example.entities.dto.UserDto;
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/home")
@@ -41,8 +39,8 @@ public class HomeController {
         UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
         model.addAttribute("username", userDto.getLogin());
 
-        List<WeatherDataDto> weatherDataList = openWeatherService.getWeatherForLocationsOf(userDto);
-        model.addAttribute("weatherDataList", weatherDataList);
+        Map<String, WeatherDataDto> weatherDataMap = openWeatherService.getWeatherForLocationsOf(userDto);
+        model.addAttribute("weatherDataMap", weatherDataMap);
 
         return "home";
     }
@@ -59,7 +57,7 @@ public class HomeController {
 
     @PostMapping("/delete")
     public String deleteLocation(@CookieValue(value="SESSION_ID", required = false) String sessionId,
-                                 @ModelAttribute("removeLocation")RemoveLocationDto removeLocationDto) {
+                                 @ModelAttribute("removeLocation") RemoveLocationDto removeLocationDto) {
 
         UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
         locationService.removeLocationForUser(removeLocationDto, userDto);

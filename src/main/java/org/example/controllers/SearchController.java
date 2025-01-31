@@ -40,8 +40,6 @@ public class SearchController {
         UserDto userDto = appSessionService.getUserDtoBySessionId(sessionId);
         model.addAttribute("username", userDto.getLogin());
 
-        // TODO: 24/01/2025 написать обработку city из параметра (там пробелы заменяются на + итд)
-        //написать какие варианты надо обрабатывать
         model.addAttribute("city", city);
 
         try {

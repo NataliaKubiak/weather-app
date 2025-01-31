@@ -21,8 +21,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -45,6 +46,7 @@ public class OpenWeatherService {
     }
 
     public List<LocationResponseDto> getLocationByCity(String city) throws UnsupportedEncodingException, JsonProcessingException {
+        log.info("Searching City with name: {}", city);
         String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
 
         String url = UriComponentsBuilder.fromUriString("https://api.openweathermap.org/data/2.5/weather")
@@ -67,12 +69,15 @@ public class OpenWeatherService {
     }
 
     @Transactional
-    public List<WeatherDataDto> getWeatherForLocationsOf(UserDto userDto) throws JsonProcessingException {
+    public Map<String, WeatherDataDto> getWeatherForLocationsOf(UserDto userDto) throws JsonProcessingException {
+        log.info("Getting Weather for all locations for User: {}", userDto.getLogin());
+
         List<Location> locationsByUserId = locationDao.getLocationsByUserId(userDto.getId());
-        List<WeatherDataDto> weatherDataList = new ArrayList<>();
+        Map<String, WeatherDataDto> weatherDataMap = new HashMap<>();
 
         for (Location location : locationsByUserId) {
 
+            log.info("Getting Weather Info For the Location: {}", location.getName());
             String url = UriComponentsBuilder.fromUriString("https://api.openweathermap.org/data/2.5/weather")
                     .queryParam("lat", location.getLatitude())
                     .queryParam("lon", location.getLongitude())
@@ -92,10 +97,10 @@ public class OpenWeatherService {
 
             WeatherDataDto weatherDataDto = mapper.readValue(jsonString, WeatherDataDto.class);
 
-            weatherDataList.add(weatherDataDto);
+            weatherDataMap.put(location.getName(), weatherDataDto);
         }
 
-        return weatherDataList;
+        return weatherDataMap;
     }
 
     private void handleApiError(RestClientException exception) {

@@ -42,28 +42,28 @@
     <div>
       <div class="row">
 
-        <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="weather : ${weatherDataList}">
+        <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="entry : ${weatherDataMap}">
           <div class="card h-100 position-relative weather-card">
 
             <img class="card-img-top img-fluid"
-                 th:src="'https://openweathermap.org/img/wn/' + ${weather.icon} + '@4x.png'"
-                 th:alt="'Weather icon: ' + ${weather.icon}">
+                 th:src="'https://openweathermap.org/img/wn/' + ${entry.value.icon} + '@4x.png'"
+                 th:alt="'Weather icon: ' + ${entry.value.icon}">
             <div class="card-body d-flex flex-column">
-              <h1 class="card-text" th:text="${weather.temp} + '°C'"></h1>
-              <h3 class="card-title" th:text="${weather.name} + ', ' + ${weather.country}"></h3>
+              <h1 class="card-text" th:text="${entry.value.temp} + '°C'"></h1>
+              <h3 class="card-title" th:text="${entry.key} + ', ' + ${entry.value.country}"></h3>
               <p class="card-text mb-1">
-                Feels like <span th:text="${weather.feelsLike} + '°C'"></span>.
-                <span th:text="${weather.description}"></span>
+                Feels like <span th:text="${entry.value.feelsLike} + '°C'"></span>.
+                <span th:text="${entry.value.description}"></span>
               </p>
-              <p class="card-text mb-1">Humidity: <span th:text="${weather.humidity} + '%'"></span></p>
+              <p class="card-text mb-1">Humidity: <span th:text="${entry.value.humidity} + '%'"></span></p>
             </div>
 
             <!-- Кнопка для удаления карточки -->
             <div class="position-absolute weather-card-delete-form">
               <form th:action="@{/home/delete}" method="post" th:object="${removeLocation}">
-                <input type="hidden" th:name="name" th:value="${weather.name}"/>
-                <input type="hidden" th:name="latitude" th:value="${weather.latitude}"/>
-                <input type="hidden" th:name="longitude" th:value="${weather.longitude}"/>
+                <input type="hidden" th:name="name" th:value="${entry.key}"/>
+                <input type="hidden" th:name="latitude" th:value="${entry.value.latitude}"/>
+                <input type="hidden" th:name="longitude" th:value="${entry.value.longitude}"/>
                 <button type="submit" class="btn-close" aria-label="Delete"></button>
               </form>
             </div>

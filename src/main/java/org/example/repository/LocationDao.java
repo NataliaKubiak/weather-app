@@ -2,8 +2,10 @@ package org.example.repository;
 
 import lombok.extern.log4j.Log4j2;
 import org.example.entities.Location;
+import org.example.exceptions.EntityAlreadyExistsException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,21 +26,14 @@ public class LocationDao {
     public Location createLocation(Location location) {
         log.info("Saving Location: {}", location);
 
-        Session session = sessionFactory.getCurrentSession();
-        Optional<Location> maybeExistedLocation = session.createQuery(
-                        "SELECT l FROM Location l " +
-                                "WHERE l.name = :locationName " +
-                                "AND l.user.id = :userId", Location.class)
-                .setParameter("locationName", location.getName())
-                .setParameter("userId", location.getUser().getId())
-                .uniqueResultOptional();
+        try {
+            sessionFactory.getCurrentSession().persist(location);
 
-        if (maybeExistedLocation.isEmpty()) {
-            session.persist(location);
-            return location;
-        } else {
-            return maybeExistedLocation.get();
+        } catch (ConstraintViolationException e) {
+            throw new EntityAlreadyExistsException("Location '" + location.getName() + "' for user '" + location.getUser().getLogin() + "' already exists", e);
         }
+
+        return location;
     }
 
     public List<Location> getLocationsByUserId(int userId) {
@@ -51,43 +46,19 @@ public class LocationDao {
                 .list();
     }
 
-    public boolean deleteLocationByNameForUser(String locationName, int userId) {
+    public void deleteLocationByNameForUser(String locationName, int userId) {
         Session session = sessionFactory.getCurrentSession();
 
         Optional<Location> locationToDelete = session.createQuery(
                         "SELECT l FROM Location l " +
-                                "WHERE l.name = :locationName " +
-                                "AND l.user.id = :userId", Location.class)
+                                "WHERE l.user.id = :userId " +
+                                "AND l.name = :locationName", Location.class)
+                .setParameter("userId", userId)
                 .setParameter("locationName", locationName)
-                .setParameter("userId", userId)
                 .uniqueResultOptional();
 
         if (locationToDelete.isPresent()) {
             session.remove(locationToDelete.get());
-            return true;
         }
-
-        return false;
-    }
-
-    public boolean deleteLocationByCoordinatesForUser(double longitude, double latitude, int userId) {
-        Session session = sessionFactory.getCurrentSession();
-
-        Optional<Location> locationToDelete = session.createQuery(
-                        "SELECT l FROM Location l " +
-                                "WHERE l.latitude = :latitude " +
-                                "AND l.longitude = :longitude " +
-                                "AND l.user.id = :userId", Location.class)
-                .setParameter("latitude", latitude)
-                .setParameter("longitude", longitude)
-                .setParameter("userId", userId)
-                .uniqueResultOptional();
-
-        if (locationToDelete.isPresent()) {
-            session.remove(locationToDelete.get());
-            return true;
-        }
-
-        return false;
     }
 }
