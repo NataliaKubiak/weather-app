@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.entities.AppSession;
 import org.example.entities.User;
 import org.example.entities.dto.UserDto;
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class AppSessionService {
 
@@ -63,6 +65,8 @@ public class AppSessionService {
 
     @Transactional
     public UserDto getUserDtoBySessionId(String sessionId) {
+        log.info("Getting UserId by SessionId: {}", sessionId);
+
         AppSession appSession = appSessionDao.findById(sessionId).orElseThrow(() ->
                 new SessionNotFoundException("Session with id " + sessionId + " was not found in Data Base"));
 
@@ -72,12 +76,14 @@ public class AppSessionService {
 
     @Transactional
     public void deleteSessionById(String sessionId) {
+        log.info("Deleting session with id {}", sessionId);
         appSessionDao.deleteById(sessionId);
     }
 
     @Transactional
     @Scheduled(fixedRateString = "${session.cleanup.rate}") //prod = 1h; test = 1 min
     public void cleanExpiredSessions() {
+        log.info("Deleting expired sessions by the Schedule");
         appSessionDao.deleteExpiredSessions(ZonedDateTime.now());
     }
 }
