@@ -35,11 +35,23 @@ databaseChangeLog:
                   type: DOUBLE PRECISION
                   constraints:
                     nullable: false
+        # этот индекс для того чтобы запрос getLocationsByUserId(int userId) был быстрее
+        # SELECT l FROM Location l WHERE l.user.id = :userId
         - createIndex:
-            indexName: locations_user_id
+            indexName: idx_user_id
             tableName: locations
             columns:
               - column:
                   name: user_id
+        # этот индекс тк у одного юзера может быть только 1 локация без дубликатов
+        - createIndex:
+            indexName: idx_user_location
+            tableName: locations
+            unique: true
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: name
 
 
