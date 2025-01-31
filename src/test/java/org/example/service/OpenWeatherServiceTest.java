@@ -121,6 +121,8 @@ class OpenWeatherServiceTest {
                 .build();
 
         locationDao.createLocation(location);
-        assertEquals(1, location.getId());
+        assertEquals("Test City", location.getName());
+        assertEquals(1.111, location.getLongitude());
+        assertEquals(2.22, location.getLatitude());
     }
 }
