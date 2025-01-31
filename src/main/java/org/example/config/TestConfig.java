@@ -1,8 +1,6 @@
 package org.example.config;
 
 import org.example.controllers.interceptors.AppSessionInterceptor;
-import org.example.repository.UserDao;
-import org.example.service.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
