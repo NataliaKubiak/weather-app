@@ -12,9 +12,6 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherDataDto {
 
-    @JsonProperty("name")
-    private String name;
-
     @JsonProperty("country")
     private String country;
 
