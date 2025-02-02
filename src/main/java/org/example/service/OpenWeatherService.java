@@ -1,6 +1,7 @@
 package org.example.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.example.exceptions.LocationNotFoundException;
@@ -50,9 +51,9 @@ public class OpenWeatherService {
         log.info("Searching City with name: {}", city);
         String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
 
-        String url = UriComponentsBuilder.fromUriString("https://api.openweathermap.org/data/2.5/weather")
+        String url = UriComponentsBuilder.fromUriString("https://api.openweathermap.org/geo/1.0/direct")
                 .queryParam("q", encodedCity)
-                .queryParam("units", "metric")
+                .queryParam("limit", "5")
                 .queryParam("appid", apiKey)
                 .toUriString();
 
@@ -66,7 +67,7 @@ public class OpenWeatherService {
             handleApiError(ex);
         }
 
-        return List.of(mapper.readValue(jsonString, LocationResponseDto.class));
+        return mapper.readValue(jsonString, new TypeReference<List<LocationResponseDto>>(){});
     }
 
     @Transactional

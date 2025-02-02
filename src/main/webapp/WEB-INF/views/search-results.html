@@ -59,16 +59,19 @@
                 <div th:each="location : ${locations}" class="col-12 col-lg-3 col-md-6 mb-4">
                     <div class="card h-100">
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title" th:text="${location.name}">City Name</h5>
+                            <h5 class="card-title" th:text="${location.name}"></h5>
 
                             <p class="card-text mb-1">
-                                Latitude: <span th:text="${location.latitude}">0.0</span>
+                                Latitude: <span th:text="${location.latitude}"></span>
                             </p>
                             <p class="card-text mb-1">
-                                Longitude: <span th:text="${location.longitude}">0.0</span>
+                                Longitude: <span th:text="${location.longitude}"></span>
                             </p>
                             <p class="card-text mb-1">
-                                Country: <span th:text="${location.country}">Country Code</span>
+                                Country: <span th:text="${location.country}"></span>
+                            </p>
+                            <p class="card-text mb-1">
+                                State: <span th:text="${location.state}"></span>
                             </p>
                             <div class="mt-3">
                                 <form th:action="@{/home/add}" method="post" th:object="${location}">

@@ -31,7 +31,7 @@ public class LocationService {
         User user = userDtoToUserMapper.toEntity(userDto);
 
         Location location = Location.builder()
-                .name(locationResponseDto.getName())
+                .name(locationResponseDto.getName() + ", " + locationResponseDto.getCountry())
                 .user(user)
                 .latitude(locationResponseDto.getLatitude())
                 .longitude(locationResponseDto.getLongitude())
