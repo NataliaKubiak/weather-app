@@ -1,4 +1,4 @@
-package org.example.config;
+package config;
 
 import org.example.controllers.interceptors.AppSessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;

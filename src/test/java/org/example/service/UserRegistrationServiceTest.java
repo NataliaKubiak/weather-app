@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.config.TestConfig;
+import config.TestConfig;
 import org.example.entities.dto.LoginUserDto;
 import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;

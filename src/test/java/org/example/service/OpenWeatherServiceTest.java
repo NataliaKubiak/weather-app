@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.config.TestConfig;
+import config.TestConfig;
 import org.example.entities.Location;
 import org.example.entities.User;
 import org.example.entities.dto.LocationResponseDto;
@@ -58,50 +58,62 @@ class OpenWeatherServiceTest {
     @Test
     void testGetLocationByCity_Successful() throws Exception {
         String mockResponse = """
-                {
-                  "coord": {
-                    "lon": -1.111,
-                    "lat": 1.111
-                  },
-                  "sys": {
+                [
+                  {
+                    "name": "TestCity",
+                    "lat": 48.1,
+                    "lon": 2.11,
                     "country": "RU",
-                    "sunrise": 17
+                    "state": "TestState"
                   },
-                  "name": "Test",
-                  "cod": 200
-                }
+                  {
+                    "name": "TestCity",
+                    "lat": 33.1,
+                    "lon": -95.1,
+                    "country": "US",
+                    "state": "TestState2"
+                  }
+                ]
                 """;
 
-        mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
+        mockServer.expect(requestTo(containsString("/geo/1.0/direct?q=TestCity")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
 
-        List<LocationResponseDto> testCityList = openWeatherService.getLocationByCity("Test");
+        List<LocationResponseDto> testCityList = openWeatherService.getLocationByCity("TestCity");
 
-        assertNotNull(testCityList);
+        assertEquals(2, testCityList.size());
 
-        assertEquals("Test", testCityList.get(0).getName());
-        assertEquals(-1.111, testCityList.get(0).getLongitude());
-        assertEquals(1.111, testCityList.get(0).getLatitude());
+        //first TestCity data
+        assertEquals("TestCity", testCityList.get(0).getName());
+        assertEquals(48.1, testCityList.get(0).getLatitude());
+        assertEquals(2.11, testCityList.get(0).getLongitude());
         assertEquals("RU", testCityList.get(0).getCountry());
+        assertEquals("TestState", testCityList.get(0).getState());
+        //second TestCity data
+        assertEquals("TestCity", testCityList.get(1).getName());
+        assertEquals(33.1, testCityList.get(1).getLatitude());
+        assertEquals(-95.1, testCityList.get(1).getLongitude());
+        assertEquals("US", testCityList.get(1).getCountry());
+        assertEquals("TestState2", testCityList.get(1).getState());
     }
 
     @Test
     void testGetLocationByCity_CityNotFound() {
-        mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
+        mockServer.expect(requestTo(containsString("/geo/1.0/direct?q=TestCity")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-        assertThrows(LocationNotFoundException.class, () -> openWeatherService.getLocationByCity("Test"));
+        assertThrows(LocationNotFoundException.class, () -> openWeatherService.getLocationByCity("TestCity"));
     }
 
     @Test
     void testGetLocationByCity_OpenWeatherApiNotRespond() {
-        mockServer.expect(requestTo(containsString("/data/2.5/weather?q=Test")))
+        mockServer.expect(requestTo(containsString("/geo/1.0/direct?q=TestCity")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        assertThrows(ResourceAccessException.class, () -> openWeatherService.getLocationByCity("Test"));
+        assertThrows(ResourceAccessException.class, () -> openWeatherService.getLocationByCity("TestCity"));
     }
 
     @Test
