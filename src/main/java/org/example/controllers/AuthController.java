@@ -12,7 +12,6 @@ import org.example.entities.dto.NewUserDto;
 import org.example.entities.dto.UserDto;
 import org.example.service.AppSessionService;
 import org.example.service.UserRegistrationService;
-import org.example.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,10 +48,6 @@ public class AuthController {
     public String signUp(@ModelAttribute("newUserDto") @Valid NewUserDto newUserDto,
                          BindingResult bindingResult,
                          HttpServletResponse response) {
-
-        if (!Validator.isSamePassword(newUserDto.getPassword(), newUserDto.getRepeatPassword())) {
-            bindingResult.rejectValue("repeatPassword", "passwords.not.match", "Passwords don't match.");
-        }
 
         if (bindingResult.hasErrors()) {
               return "sign-up";// возвращаем на форму с ошибками
